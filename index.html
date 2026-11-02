@@ -565,20 +565,13 @@
     <div class="download-block">
       <h3>Download Options</h3>
       
-      <div class="download-category">Active Card (Shown in Preview)</div>
-      <div class="actions-grid">
-        <button class="btn btn-gold" onclick="downloadCurrentCardPNG()">
-          Active PNG
-        </button>
-        <button class="btn btn-teal" onclick="downloadCurrentCardPDF()">
-          Active PDF
-        </button>
-      </div>
-
-      <div class="download-category">Complete 3-Card PDF Package</div>
+      <div class="download-category">Complete PDF Packages</div>
       <div class="btn-stack">
         <button class="btn btn-teal" style="font-size:13px; padding:12px;" onclick="downloadThreeCardsPDF()">
           ★ Download Complete 3-Page PDF
+        </button>
+        <button class="btn btn-gold" style="font-size:13px; padding:12px;" onclick="downloadTwoCardsPDF()">
+          Download Cover + Main Invite PDF
         </button>
       </div>
 
@@ -855,6 +848,24 @@ function downloadCurrentCardPDF() {
   const fileName = `${guest} - ${cardTitles[currentCardIndex]}.pdf`;
   pdf.save(fileName);
   showToast(`Downloaded: ${fileName}`);
+}
+
+// Download 2-Page PDF (Cover + Main Invite)
+function downloadTwoCardsPDF() {
+  if (!window.jspdf) { alert("jsPDF library loading... please try again."); return; }
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: [595.28, 892.9] });
+
+  for (let i = 0; i < 2; i++) {
+    if (i > 0) pdf.addPage([595.28, 892.9], 'portrait');
+    const c = getRenderedCardCanvas(i);
+    pdf.addImage(c.toDataURL('image/jpeg', 0.94), 'JPEG', 0, 0, 595.28, 892.9, undefined, 'FAST');
+  }
+
+  const guest = getGuestName();
+  const fileName = `${guest} - Insiya & Ali Asghar Wedding Invitation (Cover + Main).pdf`;
+  pdf.save(fileName);
+  showToast(`Downloaded Cover + Main Invite PDF!`);
 }
 
 // Download 3-Page PDF
